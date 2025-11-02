@@ -11,8 +11,9 @@ Features:
 - sensors for current, voltage, VIN number, etc.
 
 
-This has been tested using Olimex ESP32-POE-ISO-IND + MOD-RS485.
+This has been tested using an Olimex ESP32-POE-ISO-IND and an Olimex MOD-RS485.
 
+To find the serial number of your TWC, check the sticker located on the side of the device (the same side as the Reset button). The serial number is labeled as the “TSN” and consists of 11 alphanumeric characters, for example: A18B0001234.
 
 Example config file:
 ```yaml
