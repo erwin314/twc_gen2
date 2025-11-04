@@ -1,6 +1,9 @@
 #include "twc_gen2_controller.h"
 #include <sstream>
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+
 namespace esphome {
 namespace twc_gen2 {
 
@@ -74,9 +77,9 @@ void TwcGen2Controller::loadbalance_max_current() {
   for (uint8_t n = 1; n <= 3; n++) {
     auto con = this->rs485_->get_connector_by_nr(n);
     if (con && (con->actual_current > 0)) {
-      con->max_current = min(this->twc_limit[n - 1], global_limit_divided_over_active_twcs);
+      con->max_current = MIN(this->twc_limit[n - 1], global_limit_divided_over_active_twcs);
     } else if (con) {
-      con->max_current = min(this->twc_limit[n - 1], this->global_limit);
+      con->max_current = MIN(this->twc_limit[n - 1], this->global_limit);
     }
   }
 }
@@ -106,7 +109,7 @@ void TwcGen2Controller::on_connector_changed(ConnectorState *c) {
     ESP_LOGI(TAG, "Initialized connector%d (serial: %s).", nr, s);
 
     // Set the limit of this TWC, initialize to the smallest limit.
-    c->max_current = min(this->twc_limit[nr - 1], this->global_limit);
+    c->max_current = MIN(this->twc_limit[nr - 1], this->global_limit);
   }
 
   // rs485_->log_connector_state(c);

@@ -1,25 +1,5 @@
-# twc_gen2
-Tesla Wall Connector (generation 2) ESPHome controller.
-
-Features:
-- control multiple Tesla Wall Connector's (TWC's)
-- load balancing between TWC's
-- configure maximum current for each individual TWC
-- configure maximum current for all TWC's combined
-- maximum current for all TWC's combined can be controller from Home Assistant
-- individual TWC's can be turned on/off from Home Assistant
-- sensors for current, voltage, VIN number, etc.
-
-
-This has been tested using an Olimex ESP32-POE-ISO-IND and an Olimex MOD-RS485.
-
-To find the serial number of your TWC, check the sticker located on the side of the device (the same side as the Reset button). The serial number is labeled as the “TSN” and consists of 11 alphanumeric characters, for example: A18B0001234.
-
-Example config file:
-```yaml
 esphome:
-  name: ...
-  friendly_name: ...
+  name: twctest
 
 esp32:
   board: esp32-poe-iso
@@ -35,22 +15,23 @@ logger:
 
 # Enable Home Assistant API
 api:
-  encryption:
-    key: ...
+  password: ""
 
 ota:
   - platform: esphome
-    password: ...
+    password: ""
 
-# Enable ethernet (for network and PoE)
-ethernet:
-  type: LAN8720
-  mdc_pin: GPIO23
-  mdio_pin: GPIO18
-  clk_mode: GPIO17_OUT
-  phy_addr: 0
-  power_pin: GPIO12
+wifi:
+  ssid: "testwifi"
+  password: ""
 
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Twctest Fallback Hotspot"
+    password: "wvokFmWePmPC"
+
+captive_portal:
+    
 uart:
   id: twc_uart
   tx_pin: GPIO4
@@ -60,27 +41,24 @@ uart:
   parity: NONE
   stop_bits: 1
 
+
 external_components:
-  - source: github://erwin314/twc_gen2
+#  - source: github://erwin314/twc_gen2
+#    components: [twc_gen2]
+  - source:
+      type: local
+      path: /components
     components: [twc_gen2]
-  # Or you can use a local copy:
-  #- source:
-  #    type: local
-  #    path: /workspaces/esphome/esphome/components
-  #  components: [twc_gen2]
 
 twc_gen2:
   uart_id: twc_uart
   flow_control_pin: 14
   read_only: false
-  # Add the serial numbers of you Tesla Wall Connector's here.
-  # Set read_only to True if you don't know your serial number(s),
-  # you can than look in the logs to find the serial number(s).
-  c1_serial: A1.........
-  c2_serial: A1.........
+  c1_serial: A18G0005893
+  c2_serial: A18H0020359
   global_limit: 16
-  c1_limit: 16
-  c2_limit: 16
+  c1_limit: 32
+  c2_limit: 32
 
 number:
   - platform: twc_gen2
@@ -90,10 +68,12 @@ number:
       max_value: 32
 
 switch:
-  - platform: twc_gen2
+  - platform: twc_gen2    
     c1_allow_charging:
+      restore_mode: RESTORE_DEFAULT_OFF
       name: 1 Allow Charging
     c2_allow_charging:
+      restore_mode: RESTORE_DEFAULT_OFF
       name: 2 Allow Charging
 
 text_sensor:
@@ -149,4 +129,3 @@ sensor:
     name: 1 Actual Current
   c2_actual_current:
     name: 2 Actual Current
-```

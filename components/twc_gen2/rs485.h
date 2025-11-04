@@ -6,6 +6,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include "esp_random.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include "esphome/components/uart/uart_component.h"
