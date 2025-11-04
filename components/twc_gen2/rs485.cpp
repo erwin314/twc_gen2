@@ -3,7 +3,6 @@
 #include <cstdarg>
 #include <cassert>
 #include <sstream>
-#include <Arduino.h>
 
 #include "esphome/core/log.h"
 #include "esphome/core/component.h"
@@ -409,7 +408,8 @@ void RS485::sender_task(void *pvParameter) {
 
     // Give time for the answer to be received.
     // vTaskDelay(500 + random(50, 100) / portTICK_PERIOD_MS);
-    vTaskDelay(200 + random(50, 100) / portTICK_PERIOD_MS);
+    uint32_t r = 50 + (esp_random() % 51); // [50, 100]
+    vTaskDelay(200 + r / portTICK_PERIOD_MS);
 
     // Should we send a START or STOP charging command?
     if (c->allow_charging != c->allow_charging_last_send) {
@@ -418,7 +418,8 @@ void RS485::sender_task(void *pvParameter) {
         rs485->send_command(START_CHARGING, c->twcid);
       else
         rs485->send_command(STOP_CHARGING, c->twcid);
-      vTaskDelay(200 + random(50, 100) / portTICK_PERIOD_MS);
+      uint32_t r = 50 + (esp_random() % 51); // [50, 100]
+      vTaskDelay(200 + r / portTICK_PERIOD_MS);
     }
 
     switch (c->command_nr) {
@@ -442,7 +443,8 @@ void RS485::sender_task(void *pvParameter) {
         break;
     }
     // Allow time for answer to be received (or a presence packet send be a new TWC)
-    vTaskDelay(200 + random(50, 100) / portTICK_PERIOD_MS);
+    r = 50 + (esp_random() % 51); // [50, 100]
+    vTaskDelay(200 + r / portTICK_PERIOD_MS);
 
     // Next command
     c->command_nr = (c->command_nr + 1) % 5;
